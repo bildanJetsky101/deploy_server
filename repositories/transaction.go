@@ -12,7 +12,7 @@ type TransactionRepository interface {
 	GetTransaction(ID int) (models.Transaction, error)
 	//GetCartsTransaction(UserID int) ([]models.Cart, error)
 	CreateTransaction(cart models.Transaction) (models.Transaction, error)
-	//UpdateTransaction(status string, ID string) error
+	UpdateTransaction(status string, ID string) error
 	GetOneTransaction(ID string) (models.Transaction, error)
 }
 
@@ -33,11 +33,11 @@ func (r *repository) GetTransactions(UserID int) ([]models.Transaction, error) {
 	return transactions, err
 }
 
-func (r *repository) GetTransaction(UserID int) (models.Transaction, error) {
-	var transaction models.Transaction
-	err := r.db.First(&transaction, UserID).Error
+func (r *repository) GetTransaction(ID int) (models.Transaction, error) {
+	var transactions models.Transaction
+	err := r.db.First(&transactions, ID).Error
 
-	return transaction, err
+	return transactions, err
 }
 
 // func (r *repository) GetCartsTransaction(UserID int) ([]models.Cart, error) {
@@ -53,42 +53,24 @@ func (r *repository) CreateTransaction(transaction models.Transaction) (models.T
 	return transaction, err
 }
 
-// func (r *repository) UpdateTransaction(status string, ID string) error {
-// 	var transaction models.Transaction
-// 	r.db.Preload("User").Preload("Carts").Preload("Carts.Product").Preload("Carts.Toping").First(&transaction, ID)
+func (r *repository) UpdateTransaction(status string, ID string) error {
+	var transaction models.Transaction
+	r.db.Preload("User").Preload("Carts").Preload("Carts.Product").Preload("Carts.Toping").First(&transaction, ID)
 
-// 	if status != transaction.Status && status == "success" {
-// 	}
+	if status != transaction.Status && status == "success" {
 
-// 	transaction.Status = status
+	}
 
-// 	err := r.db.Save(&transaction).Error
+	transaction.Status = status
 
-// 	return err
-// }
+	err := r.db.Save(&transaction).Error
 
-// func (r *repository) UpdateTransaction(status string, ID string) (error) {
-// 	var transaction models.Transaction
-// 	r.db.Preload("Product").First(&transaction, ID)
-
-// 	// If is different & Status is "success" decrement product quantity
-// 	if status != transaction.Status && status == "success" {
-// 	  var product models.Product
-// 	  r.db.First(&product, transaction.Product.ID)
-// 	  product.Stock = product.Stock - 1
-// 	  r.db.Save(&product)
-// 	}
-
-// 	transaction.Status = status
-
-// 	err := r.db.Save(&transaction).Error
-
-// 	return err
-//   }
+	return err
+}
 
 func (r *repository) GetOneTransaction(ID string) (models.Transaction, error) {
 	var transaction models.Transaction
-	err := r.db.Preload("Product").Preload("Buyer").First(&transaction, "id = ?", ID).Error
+	err := r.db.Preload("Product").First(&transaction, "id = ?", ID).Error
 
 	return transaction, err
 }

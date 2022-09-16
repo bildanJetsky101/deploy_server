@@ -16,6 +16,8 @@ func main() {
 	// initial DB
 	mysql.DatabaseInit()
 
+	//var port = os.Getenv("PORT");
+
 	// run migration
 	database.RunMigration()
 
