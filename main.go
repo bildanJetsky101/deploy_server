@@ -17,7 +17,7 @@ func main() {
 	// initial DB
 	mysql.DatabaseInit()
 
-	var port = os.Getenv("PORT")
+	//var port = os.Getenv("PORT")
 
 	// run migration
 	database.RunMigration()
@@ -29,6 +29,8 @@ func main() {
 		panic("Failed to load env file")
 	}
 
+	fmt.Println(os.Getenv("DB_PORT"))
+
 	// Setup allowed Header, Method, and Origin for CORS on this below code ...
 	var AllowedHeaders = handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	var AllowedMethods = handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS", "PATCH", "DELETE"})
@@ -37,8 +39,8 @@ func main() {
 	r.PathPrefix("/uploads").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 	routes.RouteInit(r.PathPrefix("/api/v1").Subrouter())
 
-	fmt.Println("server running localhost:" + port)
+	fmt.Println("server running localhost:" + os.Getenv("PORT"))
 	// Embed the setup allowed in 2 parameter on this below code ...
-	http.ListenAndServe(":"+port, handlers.CORS(AllowedHeaders, AllowedMethods, AllowedOrigins)(r))
+	http.ListenAndServe(":"+os.Getenv("PORT"), handlers.CORS(AllowedHeaders, AllowedMethods, AllowedOrigins)(r))
 
 }
