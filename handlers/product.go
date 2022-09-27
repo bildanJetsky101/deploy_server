@@ -1,14 +1,19 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
 	productdto "server_wb/dto/product"
 	dto "server_wb/dto/result"
 	"server_wb/models"
 	"server_wb/repositories"
 	"strconv"
 
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 )
@@ -34,7 +39,8 @@ func (h *handlerProduct) FindProducts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for i, p := range products {
-		products[i].Image = path_file + p.Image
+		imagePath := os.Getenv("PATH_FILE") + p.Image
+		products[i].Image = imagePath
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -55,7 +61,7 @@ func (h *handlerProduct) GetProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product.Image = path_file + product.Image
+	product.Image = os.Getenv("PATH_FILE") + product.Image
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: convertProductResponse(product)}
@@ -63,27 +69,26 @@ func (h *handlerProduct) GetProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handlerProduct) CreateProduct(w http.ResponseWriter, r *http.Request) {
+
+	var ctx = context.Background()
+	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+	var API_KEY = os.Getenv("API_KEY")
+	var API_SECRET = os.Getenv("API_SECRET")
+
 	w.Header().Set("Content-Type", "application/json")
 
 	price, _ := strconv.Atoi(r.FormValue("price"))
 	stock, _ := strconv.Atoi(r.FormValue("stock"))
 	dataContex := r.Context().Value("dataFile")
-	filename := dataContex.(string)
+	filepath := dataContex.(string)
 
 	request := productdto.CreateProduct{
 		Title: r.FormValue("title"),
 		Desc:  r.FormValue("desc"),
 		Price: price,
 		Stock: stock,
-		Image: filename,
+		Image: filepath,
 	}
-
-	// if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-	// 	w.WriteHeader(http.StatusBadRequest)
-	// 	response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
-	// 	json.NewEncoder(w).Encode(response)
-	// 	return
-	// }
 
 	validation := validator.New()
 	err := validation.Struct(request)
@@ -94,12 +99,22 @@ func (h *handlerProduct) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Add your Cloudinary credentials ...
+	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+
+	// Upload file to Cloudinary ...
+	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "waysbeans"})
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
 	product := models.Product{
 		Title: request.Title,
 		Price: request.Price,
 		Stock: request.Stock,
 		Desc:  request.Desc,
-		Image: request.Image,
+		Image: resp.SecureURL,
 	}
 
 	data, err := h.ProductRepository.CreateProduct(product)
