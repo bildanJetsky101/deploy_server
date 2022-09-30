@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
+	dto "server_wb/dto/result"
 )
 
 func UploadFile(next http.HandlerFunc) http.HandlerFunc {
@@ -29,6 +31,32 @@ func UploadFile(next http.HandlerFunc) http.HandlerFunc {
 		// 	json.NewEncoder(w).Encode(response)
 		// 	return
 		// }
+
+		// setup file type filtering
+		buff := make([]byte, 512)
+		_, err = file.Read(buff)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		filetype := http.DetectContentType(buff)
+		if filetype != "image/jpeg" && filetype != "image/png" {
+			w.WriteHeader(http.StatusBadRequest)
+			response := dto.ErrorResult{Code: http.StatusBadRequest, Message: "The provided file format is not allowed. Please upload a JPEG or PNG image"}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		_, err = file.Seek(0, io.SeekStart)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
+			json.NewEncoder(w).Encode(response)
+			return
+		}
 
 		// Create a temporary file within our temp-images directory that follows
 		// a particular naming pattern
