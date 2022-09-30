@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	dto "server_wb/dto/result"
 )
 
 func UploadFile(next http.HandlerFunc) http.HandlerFunc {
@@ -17,20 +16,6 @@ func UploadFile(next http.HandlerFunc) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err)
 			json.NewEncoder(w).Encode("Error Retrieving the File")
-			return
-		}
-		defer file.Close()
-
-		if err != nil && r.Method == "PATCH" {
-			ctx := context.WithValue(r.Context(), "dataFile", "false")
-			next.ServeHTTP(w, r.WithContext(ctx))
-			return
-		}
-
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
-			json.NewEncoder(w).Encode(response)
 			return
 		}
 		defer file.Close()
