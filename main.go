@@ -8,7 +8,7 @@ import (
 	"server_wb/pkg/mysql"
 	"server_wb/routes"
 
-	//"github.com/gorilla/handlers"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
@@ -26,19 +26,18 @@ func main() {
 	}
 
 	fmt.Println(os.Getenv("DB_PORT"))
-
-	// Setup allowed Header, Method, and Origin for CORS on this below code ...
-	// var AllowedHeaders = handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
-	// var AllowedMethods = handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS", "PATCH", "DELETE"})
-	// var AllowedOrigins = handlers.AllowedOrigins([]string{"*"})
-
 	r.PathPrefix("/uploads").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 	routes.RouteInit(r.PathPrefix("/api/v1").Subrouter())
+
+	// Setup allowed Header, Method, and Origin for CORS on this below code ...
+	var AllowedHeaders = handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	var AllowedMethods = handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS", "PATCH", "DELETE"})
+	var AllowedOrigins = handlers.AllowedOrigins([]string{"*"})
 
 	var port = os.Getenv("PORT")
 
 	fmt.Println("server running localhost:" + port)
 
-	http.ListenAndServe(":"+port, (r))
+	http.ListenAndServe(":"+port, handlers.CORS(AllowedHeaders, AllowedMethods, AllowedOrigins)(r))
 
 }
