@@ -28,7 +28,7 @@ func main() {
 	fmt.Println(os.Getenv("DB_PORT"))
 
 	// Setup allowed Header, Method, and Origin for CORS on this below code ...
-	var AllowedHeaders = handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	// var AllowedHeaders = handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	var AllowedMethods = handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS", "PATCH", "DELETE"})
 	var AllowedOrigins = handlers.AllowedOrigins([]string{"*"})
 
@@ -39,6 +39,6 @@ func main() {
 
 	fmt.Println("server running localhost:" + port)
 
-	http.ListenAndServe(":"+port, handlers.CORS(AllowedHeaders, AllowedMethods, AllowedOrigins)(r))
+	http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), AllowedMethods, AllowedOrigins)(r))
 
 }
