@@ -5,7 +5,7 @@ type CreateProduct struct {
 	Price int    `json:"price" form:"price" gorm:"type: int" validate:"required"`
 	Stock int    `json:"stock" form:"stock" gorm:"type: int" validate:"required"`
 	Desc  string `json:"desc" form:"desc" validate:"required"`
-	Image string `json:"image" form:"image" validate:"required"`
+	Image string `json:"image" form:"image" `
 }
 
 type UpdateProduct struct {
@@ -13,5 +13,5 @@ type UpdateProduct struct {
 	Price int    `json:"price" form:"price" gorm:"type: int" validate:"required"`
 	Stock int    `json:"stock" form:"stock" gorm:"type: int" validate:"required"`
 	Desc  string `json:"desc" form:"desc" validate:"required"`
-	Image string `json:"image" form:"image" validate:"required"`
+	Image string `json:"image" form:"image" `
 }
