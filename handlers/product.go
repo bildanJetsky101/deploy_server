@@ -22,7 +22,7 @@ type handlerProduct struct {
 	ProductRepository repositories.ProductRepository
 }
 
-var path_file = "http://localhost:5000/uploads/"
+// var path_file = "http://localhost:5000/uploads/"
 
 func HandlerProduct(ProductRepository repositories.ProductRepository) *handlerProduct {
 	return &handlerProduct{ProductRepository}

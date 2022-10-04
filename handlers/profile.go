@@ -17,7 +17,7 @@ type handlerProfile struct {
 	ProfileRepository repositories.ProfileRepository
 }
 
-//var path_file = "http://localhost:5000/uploads/"
+var path_file = "http://localhost:5000/uploads/"
 
 func HandlerProfile(ProfileRepository repositories.ProfileRepository) *handlerProfile {
 	return &handlerProfile{ProfileRepository}
