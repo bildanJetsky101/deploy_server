@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 	profiledto "server_wb/dto/profile"
 	dto "server_wb/dto/result"
 	"server_wb/models"
@@ -17,7 +18,7 @@ type handlerProfile struct {
 	ProfileRepository repositories.ProfileRepository
 }
 
-var path_file = "http://localhost:5000/uploads/"
+var path_file = os.Getenv("PATH_FILE")
 
 func HandlerProfile(ProfileRepository repositories.ProfileRepository) *handlerProfile {
 	return &handlerProfile{ProfileRepository}
