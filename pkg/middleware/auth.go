@@ -9,12 +9,6 @@ import (
 	"strings"
 )
 
-// type Result struct {
-// 	Code    int         `json:"code"`
-// 	Data    interface{} `json:"data"`
-// 	Message string      `json:"message"`
-// }
-
 func Auth(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
