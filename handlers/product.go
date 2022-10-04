@@ -123,10 +123,8 @@ func (h *handlerProduct) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(err.Error())
 	}
 
-	product, _ = h.ProductRepository.GetProduct(data.ID)
-
 	w.WriteHeader(http.StatusOK)
-	response := dto.SuccessResult{Code: http.StatusOK, Data: convertProductResponse(product)}
+	response := dto.SuccessResult{Code: http.StatusOK, Data: convertProductResponse(data)}
 	json.NewEncoder(w).Encode(response)
 }
 
