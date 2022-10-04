@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"context"
+	// "context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -12,8 +12,8 @@ import (
 	"server_wb/repositories"
 	"strconv"
 
-	"github.com/cloudinary/cloudinary-go/v2"
-	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
+	//"github.com/cloudinary/cloudinary-go/v2"
+	//"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 )
@@ -94,16 +94,16 @@ func (h *handlerProduct) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var ctx = context.Background()
+	// var ctx = context.Background()
 	// var CLOUD_NAME = os.Getenv("CLOUD_NAME")
 	// var API_KEY = os.Getenv("API_KEY")
 	// var API_SECRET = os.Getenv("API_SECRET")
 
 	// Add your Cloudinary credentials ...
-	cld, _ := cloudinary.NewFromParams(os.Getenv("CLOUD_NAME"), os.Getenv("API_KEY"), os.Getenv("API_SECRET"))
+	//cld, _ := cloudinary.NewFromParams(os.Getenv("CLOUD_NAME"), os.Getenv("API_KEY"), os.Getenv("API_SECRET"))
 
 	// Upload file to Cloudinary ...
-	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "waysbeans"})
+	//resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "waysbeans"})
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -114,7 +114,7 @@ func (h *handlerProduct) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		Price: request.Price,
 		Stock: request.Stock,
 		Desc:  request.Desc,
-		Image: resp.SecureURL,
+		Image: request.Image,
 	}
 
 	data, err := h.ProductRepository.CreateProduct(product)
