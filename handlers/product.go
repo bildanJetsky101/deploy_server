@@ -70,11 +70,6 @@ func (h *handlerProduct) GetProduct(w http.ResponseWriter, r *http.Request) {
 
 func (h *handlerProduct) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
-	var ctx = context.Background()
-	// var CLOUD_NAME = os.Getenv("CLOUD_NAME")
-	// var API_KEY = os.Getenv("API_KEY")
-	// var API_SECRET = os.Getenv("API_SECRET")
-
 	w.Header().Set("Content-Type", "application/json")
 
 	price, _ := strconv.Atoi(r.FormValue("price"))
@@ -99,8 +94,13 @@ func (h *handlerProduct) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var ctx = context.Background()
+	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+	var API_KEY = os.Getenv("API_KEY")
+	var API_SECRET = os.Getenv("API_SECRET")
+
 	// Add your Cloudinary credentials ...
-	cld, _ := cloudinary.NewFromParams(os.Getenv("CLOUD_NAME"), os.Getenv("API_KEY"), os.Getenv("API_SECRET"))
+	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
 
 	// Upload file to Cloudinary ...
 	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "waysbeans"})
@@ -123,8 +123,10 @@ func (h *handlerProduct) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(err.Error())
 	}
 
+	product, _ = h.ProductRepository.GetProduct(data.ID)
+
 	w.WriteHeader(http.StatusOK)
-	response := dto.SuccessResult{Code: http.StatusOK, Data: convertProductResponse(data)}
+	response := dto.SuccessResult{Code: http.StatusOK, Data: convertProductResponse(product)}
 	json.NewEncoder(w).Encode(response)
 }
 
