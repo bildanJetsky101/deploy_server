@@ -82,6 +82,7 @@ func (h *handlerProduct) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		Desc:  r.FormValue("desc"),
 		Price: price,
 		Stock: stock,
+		Image: filepath,
 	}
 
 	validation := validator.New()
