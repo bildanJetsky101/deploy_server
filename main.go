@@ -30,7 +30,7 @@ func main() {
 	// Setup allowed Header, Method, and Origin for CORS on this below code ...
 	// var AllowedHeaders = handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	var AllowedMethods = handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS", "PATCH", "DELETE"})
-	var AllowedOrigins = handlers.AllowedOrigins([]string{"*"})
+	//var AllowedOrigins = handlers.AllowedOrigins([]string{"*"})
 
 	r.PathPrefix("/uploads").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 	routes.RouteInit(r.PathPrefix("/api/v1").Subrouter())
@@ -39,6 +39,6 @@ func main() {
 
 	fmt.Println("server running localhost:" + port)
 
-	http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), AllowedMethods, AllowedOrigins)(r))
+	http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), AllowedMethods, handlers.AllowedOrigins([]string{"*"}))(r))
 
 }
